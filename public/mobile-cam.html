@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body,
+        html {
+            height: 100%;
+            font-family: inter;
+            text-transform: uppercase;
+            background-color: #222;
+        }
+        #canvasDiv {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 25% 25% 25% 25%;
+            grid-template-rows: 50% 50%;
+            column-gap: 10px;
+            row-gap: 10px;
+            justify-items: center;
+            align-items: center;
+        }
+
+        #canvasDiv div {
+            width: 100%;
+            height: 100%;
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+
+            transition: opacity .1s ease-out;
+            opacity: 0;
+        }
+
+        #canvasDiv div.active {
+            opacity: 1;
+        }
+
+        #canvasDiv video,
+        #canvasDiv canvas {
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        #name {
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            color: #fff;
+            mix-blend-mode: difference;
+        }
+        
+        #id {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            color: #fff;
+            mix-blend-mode: difference;
+        }
+
+        #button_container {
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvasDiv"></div>
+    <div id="name"></div>
+    <div id="id"></div>
+
+    <video id="video"></video>
+    
+
+    <script type="module">
+        import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+
+        const { ImageEmbedder, FilesetResolver } = vision;
+        let nodes = [];
+
+        const loadModels = async () => {
+            const vision = await FilesetResolver.forVisionTasks(
+                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+            );
+            const imageEmbedder = await ImageEmbedder.createFromOptions(
+                vision,
+                {
+                    baseOptions: {
+                        modelAssetPath: "https://storage.googleapis.com/mediapipe-models/image_embedder/mobilenet_v3_small/float32/1/mobilenet_v3_small.tflite"
+                    },
+                }
+            );
+
+            let els = [];
+            const video = document.querySelector('video');
+            const videoCanvas = document.createElement('canvas');
+            const videoCtx = videoCanvas.getContext('2d');
+            videoCanvas.width = 600;
+            videoCanvas.height = 480;
+
+            videoCanvas.style.width = '600px';
+            videoCanvas.style.height = '480px';
+
+            document.body.appendChild(videoCanvas);
+
+            // Request access to the user's camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    // Set the video element's source to the camera stream
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(error => {
+                    console.error('Error accessing camera:', error);
+                });
+
+
+            const handleButtonClick = async () => {
+                videoCtx.drawImage(video, 0, 0, videoCanvas.width, videoCanvas.height);
+                console.log(videoCanvas, videoCtx)
+                await processImage(videoCanvas);
+            }
+
+            const button = document.createElement('button');
+            button.textContent = 'Process Image';
+            button.addEventListener('click', handleButtonClick);
+            document.body.appendChild(button);
+
+            const processImage = async (img) => {
+                const el = document.querySelector('#canvasDiv');
+
+                // els[0].style.backgroundImage = `url(/photos/5k-compressed/5k-compressed/${img})`;
+                els[0].className = 'active';
+
+                const imageEmbedderResult = imageEmbedder.embed(img);
+                const embedding = imageEmbedderResult.embeddings[0]
+
+                const response = await fetch('/api/text/', {
+                    method: 'post',
+                    mode: 'cors',
+                    body: JSON.stringify(embedding.floatEmbedding),
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                    },
+                })
+
+                const resp = await response.json();
+                const { distances } = resp;
+
+                distances.slice(0, 7).forEach((distance, i) => {
+                    els[i + 1].style.backgroundImage = `url(/photos/5k-compressed/5k-compressed/${distance.name})`;
+
+                    setTimeout(() => {
+                        els[i + 1].className = 'active';
+                    }, 10 * i);
+                })
+            }
+
+            const container = document.querySelector('#canvasDiv');
+            for (let i = 0; i < 8; i += 1) {
+                const div = document.createElement('div');
+                container.appendChild(div);
+                els.push(div);
+            }
+
+            els[0].appendChild(video)
+            els[0].appendChild(videoCanvas)
+            els[0].appendChild(button)
+        };
+
+        loadModels();
+    </script>
+</body>
+</html>
