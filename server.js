@@ -13,10 +13,11 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static('./dist'));
 
+let existingDescriptors = [];
 ungzip(fs.readFileSync('data/embeddings.json.gz')).then((data) => {
-	let existingDescriptors = JSON.parse(data);
+	existingDescriptors = JSON.parse(data);
 	console.log(existingDescriptors.length);
-	
+
 	existingDescriptors = existingDescriptors.map((item) => {
 		item.descriptor = Object.keys(item.descriptor).map((key) => item.descriptor[key]);
 
