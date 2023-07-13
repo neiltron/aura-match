@@ -3,6 +3,8 @@ import fs from 'fs';
 import path, { dirname } from 'path';
 import cors from 'cors';
 import similarity from 'compute-cosine-similarity';
+import pkg from 'node-gzip';
+const { ungzip } = pkg;
 
 const PORT = 3005;
 
@@ -11,11 +13,15 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static('./dist'));
 
-let existingDescriptors = JSON.parse(fs.readFileSync('src/embeddings.json', 'utf8'));
-existingDescriptors = existingDescriptors.map((item) => {
-	item.descriptor = Object.keys(item.descriptor).map((key) => item.descriptor[key]);
+ungzip(fs.readFileSync('data/embeddings.json.gz')).then((data) => {
+	let existingDescriptors = JSON.parse(data);
+	console.log(existingDescriptors.length);
+	
+	existingDescriptors = existingDescriptors.map((item) => {
+		item.descriptor = Object.keys(item.descriptor).map((key) => item.descriptor[key]);
 
-	return item;
+		return item;
+	});
 });
 
 
