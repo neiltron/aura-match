@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"npm run client:dev\" \"npm run server:dev\"",
-    "client:dev": "vite dev",
+    "client:dev": "vite dev --host 0.0.0.0",
     "server:dev": "NODE_ENV=development nodemon ./server.js",
     "serve": "concurrently --kill-others \"NODE_ENV=production nodemon ./server.js\" \"vite dev\"",
     "build": "vite build",

@@ -10,6 +10,89 @@ html {
     text-transform: uppercase;
     background-color: #222;
 }
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    mix-blend-mode: difference;
+}
+
+a, a:visited {
+    color: #eee;
+}
+
+a:hover {
+    color: #fff;
+}
+
+a:active {
+    color: #ddd;
+}
+
+h1, #que-es, #okay {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    z-index: 100;
+}
+
+#close-modal {
+    color: #fff;
+    font-size: 1rem;
+}
+
+nav #que-es:hover,
+nav #okay:hover,
+#close-modal:hover {
+    color: #eee;
+}
+
+#que-es, #okay {
+    left: auto;
+    right: 20px;
+}
+#que-es, #okay, #close-modal {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-bottom: 3px solid #eee;
+}
+
+#okay {
+    display: none;
+}
+
+body:has(dialog[open]) #que-es {
+    display: none;
+}
+
+body:has(dialog[open]) #okay {
+    display: block;
+}
+
+
+@media only screen and (max-width: 980px) {
+    h1, #que-es, #okay, #close-modal {
+        font-size: 1.4rem;
+    }
+}
+
+@media only screen 
+    and (device-width: 390px) 
+    and (device-height: 844px) 
+    and (-webkit-device-pixel-ratio: 3) {
+    h1, #que-es, #okay, #close-modal {
+        font-size: 3rem;
+    }   
+}
+
 #canvasDiv {
     position: fixed;
     width: 100%;
@@ -21,8 +104,22 @@ html {
     row-gap: 10px;
     justify-items: center;
     align-items: center;
+    transition: filter .3s ease-out;
+    filter: blur(0);
 }
 
+#canvasDiv > div {
+    transition: filter .3s ease-out;
+    filter: blur(0);
+}
+
+@media only screen and (max-width: 980px) {
+    #canvasDiv {
+        grid-template-columns: 50% 50%;
+        grid-template-rows: 33% 33% 33%;
+    }
+}
+    
 #canvasDiv div {
     width: 100%;
     height: 100%;
@@ -44,23 +141,8 @@ canvas {
     height: 100%;
 }
 
-h1, #que-es {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    font-size: 1rem;
-    color: #fff;
-    mix-blend-mode: difference;
-    z-index: 100;
-}
-
-#que-es {
-    left: auto;
-    right: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-transform: uppercase;
+body:has(dialog[open]) #canvasDiv > div {
+    filter: blur(6px);
 }
 
 #name {
@@ -81,36 +163,77 @@ h1, #que-es {
 
 dialog {
     width: 100vw;
-    height: 100vh;
-    position: fixed;
+    max-width: 100vw;
+    min-height: 100vh;
+    pointer-events: none;
+    position: absolute;
+    display: flex;
     flex-direction: column;
     background: transparent;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     border: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity .3s ease-out, transform .3s ease-out;
 }
 
 dialog::backdrop {
-    background: hsl(0 0% 10% / 0.5);
+    background: hsl(0 0% 10% / 0.9);
+    transition: opacity .3s ease-out;
+    opacity: 0;
 }
 
 dialog[open] {
-    display: flex;
+    pointer-events: initial;
+    opacity: 1;
+    transform: translateY(0);
+    background: hsl(0 0% 10% / 0.7);
+}
+
+dialog[open]::backdrop {
+    opacity: 1;
 }
 
 #dialog-inner {
-    background-color: #fff;
     border-radius: 8px;
-    padding: 20px;
-    max-width: 60%;
+    padding: 20px 40px 20px 20px;
+    width: 100%;
+    font-size: 1.3rem;
+    transform: translateY(40px);
+    transition: opacity .3s ease-out, transform .3s ease-out;
 }
 
+body:has(dialog[open]) #dialog-inner {
+    transform: translateY(0);
+}   
+
+body:has(dialog[open]) #dialog-inner p {
+    display: block;
+}   
+
 dialog p {
+    color: #fff;
     margin-bottom: 1rem;
     text-transform: none;
-    line-height: 1.4rem;
+    line-height: 1.8rem;
+    text-transform: uppercase;
+    display: none;
 }
 
 dialog button {
-    padding: 4px;
+    padding: 4px 0;
+}
+
+@media only screen 
+    and (device-width: 390px) 
+    and (device-height: 844px) 
+    and (-webkit-device-pixel-ratio: 3) {
+        #dialog-inner {
+            padding-top: 80px;
+        }
+        #dialog-inner p {
+            font-size: 2.6rem;
+            line-height: 3.1rem;
+        }   
 }

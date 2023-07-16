@@ -1,26 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>auramatch</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-    <script type="module" src="./src/script.js"></script>
-    <link rel="stylesheet" href="./style.css">
+    <script type="module" src="/src/script.js"></script>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
-    <h1>aura match</h1>
-    <button id="que-es">what is this?</button>
+    <nav>
+        <h1>auramatch</h1>
+        <button id="que-es">what is this?</button>
+        <button id="okay">Okay</button>
+    </nav>
     <div id="canvasDiv"></div>
-    <div id="name"></div>
-    <div id="id"></div>
 
     <dialog>
         <div id="dialog-inner">
-            FPO FPO FPO
-            <p>Aura Match is an experiment in image embedding and similarity search. The goal is to search through all processed images and find the 7 most similar images in the data set. In each group of images, the top left image is the "search query" and the rest of the images are the results.</p>
-            <p>Thanks</p>
-            <button id="close-modal">Close</button>
+            <p>
+                A prototype by Neil Pullman. Follow me on the various whatevers whatevers.
+                <a href="https://twitter.com/realtron" target="_blank">Twitter</a>.&nbsp;
+                <a href="https://instagram.com/neiltron" target="_blank">IG/Threads</a>.
+            </p>
+            <p>-----</p>
+            <p>Auramatch is an experiment in using machine learning to navigate a large image dataset. Many image search tools use semantic search to find similar images. This instead uses feature extraction which tends to highlight similar patterns or compositions between images. A bokeh shot of raindrops on a window could look like a photo of the galaxy or a overhead shot river might resemble the veins on a leaf.</p>
+            <p>
+                In each group of images, the top left image is the "search query" and the rest of the images are the results. The results are not perfect, but they are sometimes interesting.
+            </p>
+            <p>All photos are from <a href="https://unsplash.com">Unsplash</a> and it's community of talented photographers.</p>
+            <button id="close-modal">OKAY</button>
         </div>
     </dialog>
 
