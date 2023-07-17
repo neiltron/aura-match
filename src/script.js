@@ -130,20 +130,20 @@ loadModels();
 document.querySelector('#que-es').addEventListener('click', () => {
     rotationActive = false;
 
-    document.querySelector('dialog')['show']();
+    document.querySelector('#dialog').className = 'open';
     stopTimeout();
 });
 
 document.querySelector('#okay').addEventListener('click', () => {
     rotationActive = true;
 
-    document.querySelector('dialog')['close']();
+    document.querySelector('#dialog').className = '';
     queueTimeout();
 });
 
 document.querySelector('#close-modal').addEventListener('click', () => {
     rotationActive = true;
 
-    document.querySelector('dialog')['close']();
+    document.querySelector('#dialog').className = '';
     queueTimeout();
 });

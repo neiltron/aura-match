@@ -69,11 +69,11 @@ nav #okay:hover,
     display: none;
 }
 
-body:has(dialog[open]) #que-es {
+body:has(#dialog.open) #que-es {
     display: none;
 }
 
-body:has(dialog[open]) #okay {
+body:has(#dialog.open) #okay {
     display: block;
 }
 
@@ -141,7 +141,7 @@ canvas {
     height: 100%;
 }
 
-body:has(dialog[open]) #canvasDiv > div {
+body:has(#dialog.open) #canvasDiv > div {
     filter: blur(6px);
 }
 
@@ -161,12 +161,13 @@ body:has(dialog[open]) #canvasDiv > div {
     mix-blend-mode: difference;
 }
 
-dialog {
+#dialog {
     width: 100vw;
     max-width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
+    height: 100svh;
     pointer-events: none;
-    position: absolute;
+    position: fixed;
     display: flex;
     flex-direction: column;
     background: transparent;
@@ -175,15 +176,16 @@ dialog {
     border: none;
     z-index: 0;
     opacity: 0;
+    overflow: auto;
 }
 
-dialog::backdrop {
+#dialog-backdrop {
     background: hsl(0 0% 10% / 0.9);
     transition: opacity .3s ease-out;
     opacity: 0;
 }
 
-dialog[open] {
+#dialog.open {
     pointer-events: initial;
     opacity: 1;
     transform: translateY(0);
@@ -191,28 +193,41 @@ dialog[open] {
     transition: opacity .3s ease-out, transform .3s ease-out;
 }
 
-dialog[open]::backdrop {
+#dialog.open #dialog-backdrop {
     opacity: 1;
+}
+
+
+#dialog-inner > :first-child {
+    margin-top: auto !important;
 }
 
 #dialog-inner {
     border-radius: 8px;
-    padding: 20px 40px 20px 20px;
+    padding: 80px 40px 20px 20px;
     width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
     font-size: 1.3rem;
     transform: translateY(40px);
     transition: opacity .3s ease-out, transform .3s ease-out;
+    visibility: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-flow: column nowrap;
 }
 
-body:has(dialog[open]) #dialog-inner {
+body:has(#dialog.open) #dialog-inner {
     transform: translateY(0);
+    visibility: visible;
 }   
 
-body:has(dialog[open]) #dialog-inner p {
+body:has(#dialog.open) #dialog-inner p,
+body:has(#dialog.open) #dialog-inner button {
     display: block;
-}   
+}      
 
-dialog p {
+#dialog p {
     color: #fff;
     margin-bottom: 1rem;
     text-transform: none;
@@ -221,8 +236,9 @@ dialog p {
     display: none;
 }
 
-dialog button {
+#dialog button {
     padding: 4px 0;
+    display: none;
 }
 
 @media only screen 
