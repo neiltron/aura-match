@@ -2,12 +2,14 @@ import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0"
 const { ImageEmbedder, FilesetResolver } = vision;
 import ids from './files.json'
 
-let nodes = [];
 let els = [];
-let rotationInterval;
+let rotationTimeout;
+let rotationActive = true;
 let imgIndex;
 let imageEmbedder;
 let imgs = [];
+let imgsLoaded = 0;
+let imgsTotal = 0;
 
 for (let i = 0; i < 8; i += 1) {
     const img = new Image();
@@ -37,7 +39,7 @@ const loadModels = async () => {
     imgIndex = Math.floor(Math.random() * ids.length);
     processImage(ids[imgIndex]);
 
-    startInterval();
+    queueTimeout();
 };
 
 const processImage = (id) => {
@@ -51,7 +53,9 @@ const processImage = (id) => {
         els[0].className = 'active';
 
         const imageEmbedderResult = imageEmbedder.embed(image);
-        const embedding = imageEmbedderResult.embeddings[0]
+        const embedding = imageEmbedderResult.embeddings[0];
+        imgsLoaded = 0;
+        imgsTotal = 0;
 
         const response = await fetch('/api/text/', {
             method: 'post',
@@ -68,14 +72,20 @@ const processImage = (id) => {
         try {
             const resp = await response.json();
             const { distances } = resp;
+            imgsTotal = 7 < distances.length ? 7 : distances.length;
 
-            distances.slice(0, 7).forEach((distance, i) => {
+            distances.slice(0, imgsTotal).forEach((distance, i) => {
                 els[i + 1].style.backgroundImage = `url(/photos/5k-compressed/5k-compressed/${distance.name})`;
                 
                 setTimeout(() => {
                     imgs[i].src = `/photos/5k-compressed/5k-compressed/${distance.name}`;
                     imgs[i].onload = () => {        
                         els[i + 1].className = 'active';
+                        imgsLoaded += 1;
+
+                        if (imgsLoaded >= imgsTotal && rotationActive) {
+                            queueTimeout();
+                        }
                     }
                 }, 40 * i);
             })
@@ -85,15 +95,14 @@ const processImage = (id) => {
     }
 };
 
-const startInterval = () => {
-    rotationInterval = setInterval(() => {
+const queueTimeout = () => {
+    rotationTimeout = setTimeout(() => {
         els.forEach((el, i) => {
             setTimeout(() => {
                 el.className = '';
             }, 10 * i);
         });
 
-        
         setTimeout(() => {
             // imgIndex = (imgIndex + 1) % (ids.length - 1);
             imgIndex = Math.floor(Math.random() * ids.length);
@@ -102,31 +111,37 @@ const startInterval = () => {
     }, 6000);
 };
 
-const stopInterval = () => {
-    clearInterval(rotationInterval);
+const stopTimeout = () => {
+    clearTimeout(rotationTimeout);
 };
 
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-        startInterval();
+        queueTimeout();
     } else {
-        stopInterval();
+        stopTimeout();
     }
 });
 
 loadModels();
 
 document.querySelector('#que-es').addEventListener('click', () => {
+    rotationActive = false;
+
     document.querySelector('dialog')['show']();
-    stopInterval();
+    stopTimeout();
 });
 
 document.querySelector('#okay').addEventListener('click', () => {
+    rotationActive = true;
+
     document.querySelector('dialog')['close']();
-    startInterval();
+    queueTimeout();
 });
 
 document.querySelector('#close-modal').addEventListener('click', () => {
+    rotationActive = true;
+
     document.querySelector('dialog')['close']();
-    startInterval();
+    queueTimeout();
 });
