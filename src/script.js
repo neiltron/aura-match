@@ -7,6 +7,12 @@ let els = [];
 let rotationInterval;
 let imgIndex;
 let imageEmbedder;
+let imgs = [];
+
+for (let i = 0; i < 8; i += 1) {
+    const img = new Image();
+    imgs.push(img);
+}
 
 const loadModels = async () => {
     const vision = await FilesetResolver.forVisionTasks(
@@ -64,12 +70,15 @@ const processImage = (id) => {
             const { distances } = resp;
 
             distances.slice(0, 7).forEach((distance, i) => {
-            els[i + 1].style.backgroundImage = `url(/photos/5k-compressed/5k-compressed/${distance.name})`;
-
-            setTimeout(() => {
-                els[i + 1].className = 'active';
-            }, 40 * i);
-        })
+                els[i + 1].style.backgroundImage = `url(/photos/5k-compressed/5k-compressed/${distance.name})`;
+                
+                setTimeout(() => {
+                    imgs[i].src = `/photos/5k-compressed/5k-compressed/${distance.name}`;
+                    imgs[i].onload = () => {        
+                        els[i + 1].className = 'active';
+                    }
+                }, 40 * i);
+            })
         } catch (e) {
             console.log(e);
         }
