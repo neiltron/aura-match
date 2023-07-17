@@ -69,11 +69,11 @@ nav #okay:hover,
     display: none;
 }
 
-body:has(#dialog.open) #que-es {
+body.dialog-open #que-es {
     display: none;
 }
 
-body:has(#dialog.open) #okay {
+body.dialog-open #okay {
     display: block;
 }
 
@@ -141,7 +141,7 @@ canvas {
     height: 100%;
 }
 
-body:has(#dialog.open) #canvasDiv > div {
+body.dialog-open #canvasDiv > div {
     filter: blur(6px);
 }
 
@@ -217,13 +217,13 @@ body:has(#dialog.open) #canvasDiv > div {
     flex-flow: column nowrap;
 }
 
-body:has(#dialog.open) #dialog-inner {
+body.dialog-open #dialog-inner {
     transform: translateY(0);
     visibility: visible;
 }   
 
-body:has(#dialog.open) #dialog-inner p,
-body:has(#dialog.open) #dialog-inner button {
+body.dialog-open #dialog-inner p,
+body.dialog-open #dialog-inner button {
     display: block;
 }      
 

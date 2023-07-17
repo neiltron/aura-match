@@ -131,6 +131,7 @@ document.querySelector('#que-es').addEventListener('click', () => {
     rotationActive = false;
 
     document.querySelector('#dialog').className = 'open';
+    document.body.className = 'dialog-open';
     stopTimeout();
 });
 
@@ -138,6 +139,7 @@ document.querySelector('#okay').addEventListener('click', () => {
     rotationActive = true;
 
     document.querySelector('#dialog').className = '';
+    document.body.className = '';
     queueTimeout();
 });
 
@@ -145,5 +147,6 @@ document.querySelector('#close-modal').addEventListener('click', () => {
     rotationActive = true;
 
     document.querySelector('#dialog').className = '';
+    document.body.className = '';
     queueTimeout();
 });
