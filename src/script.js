@@ -96,6 +96,8 @@ const processImage = (id) => {
 };
 
 const queueTimeout = () => {
+    console.log('queueTimeout');
+    clearTimeout(rotationTimeout);
     rotationTimeout = setTimeout(() => {
         els.forEach((el, i) => {
             setTimeout(() => {
