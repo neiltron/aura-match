@@ -45,6 +45,7 @@ const loadModels = async () => {
 const processImage = (id) => {
     const el = document.querySelector('#canvasDiv');
     const image = new Image();
+    image.crossOrigin = 'anonymous';
     image.src = `https://d3jgrypb35yrid.cloudfront.net/${id}`;
 
     els[0].style.backgroundImage = `url(https://d3jgrypb35yrid.cloudfront.net/${id})`;
