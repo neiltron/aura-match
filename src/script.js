@@ -45,9 +45,9 @@ const loadModels = async () => {
 const processImage = (id) => {
     const el = document.querySelector('#canvasDiv');
     const image = new Image();
-    image.src = `/photos/5k-compressed/5k-compressed/${id}`;
+    image.src = `https://d3jgrypb35yrid.cloudfront.net/${id}`;
 
-    els[0].style.backgroundImage = `url(/photos/5k-compressed/5k-compressed/${id})`;
+    els[0].style.backgroundImage = `url(https://d3jgrypb35yrid.cloudfront.net/${id})`;
     
     image.onload = async () => {
         els[0].className = 'active';
@@ -75,10 +75,10 @@ const processImage = (id) => {
             imgsTotal = 7 < distances.length ? 7 : distances.length;
 
             distances.slice(0, imgsTotal).forEach((distance, i) => {
-                els[i + 1].style.backgroundImage = `url(/photos/5k-compressed/5k-compressed/${distance.name})`;
+                els[i + 1].style.backgroundImage = `url(https://d3jgrypb35yrid.cloudfront.net/${distance.name})`;
                 
                 setTimeout(() => {
-                    imgs[i].src = `/photos/5k-compressed/5k-compressed/${distance.name}`;
+                    imgs[i].src = `https://d3jgrypb35yrid.cloudfront.net/${distance.name}`;
                     imgs[i].onload = () => {        
                         els[i + 1].className = 'active';
                         imgsLoaded += 1;
